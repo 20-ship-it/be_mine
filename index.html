@@ -129,6 +129,16 @@ button:active{transform:scale(0.96)}
   </div>
 </section>
 
+<section>
+  <h1>Spin the Wheel 🎡</h1>
+  <div style="position:relative; width:300px; height:300px;">
+    <canvas id="wheelCanvas" width="300" height="300" style="border-radius:50%; box-shadow:0 10px 30px rgba(0,0,0,0.25)"></canvas>
+    <button id="spinBtn" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#ff2f6d;color:#fff;padding:15px 25px;font-size:16px;border:none;border-radius:999px;cursor:pointer;box-shadow:0 10px 25px rgba(255,47,109,0.45)">Spin 💖</button>
+  </div>
+  <p id="wheelResult" style="margin-top:20px;font-size:18px;color:#fff;text-shadow:1px 1px 4px rgba(0,0,0,0.3)"></p>
+</section>
+
+
 <footer>Made with ❤️ by Yours Kothi</footer>
 
 <script>
@@ -188,6 +198,81 @@ function confettiBoom(){
     setTimeout(()=>s.remove(),6000);
   }
 }
+
+const wheelCanvas = document.getElementById('wheelCanvas');
+const ctx = wheelCanvas.getContext('2d');
+const spinBtn = document.getElementById('spinBtn');
+const wheelResult = document.getElementById('wheelResult');
+
+const tasks = [
+  "💋 Give 100 kisses",
+  "😂 Do a silly dance",
+  "🍫 Surprise with chocolates",
+  "💌 Write a love note",
+  "🎶 Sing a love song"
+];
+
+let prevIndex = -1, repeatCount = 0;
+
+function drawWheel() {
+  const num = tasks.length;
+  const angle = 2*Math.PI/num;
+  for(let i=0;i<num;i++){
+    ctx.beginPath();
+    ctx.moveTo(150,150);
+    ctx.fillStyle = i%2===0 ? '#ff9acb' : '#ff5f8f';
+    ctx.arc(150,150,150, i*angle, (i+1)*angle);
+    ctx.fill();
+    ctx.save();
+    ctx.translate(150,150);
+    ctx.rotate(i*angle + angle/2);
+    ctx.fillStyle = '#fff';
+    ctx.font = '14px Poppins';
+    ctx.textAlign = 'right';
+    ctx.fillText(tasks[i],140,5);
+    ctx.restore();
+  }
+}
+drawWheel();
+
+let rotation = 0;
+
+spinBtn.onclick = () => {
+  let newIndex;
+  do {
+    newIndex = Math.floor(Math.random()*tasks.length);
+  } while(newIndex === prevIndex && repeatCount >= 2);
+
+  if(newIndex === prevIndex) repeatCount++; else repeatCount=0;
+  prevIndex = newIndex;
+
+  const spins = 5 + Math.random()*5; // random spins
+  const anglePerSlice = 2*Math.PI/tasks.length;
+  const targetRotation = 2*Math.PI*spins - newIndex*anglePerSlice + anglePerSlice/2;
+
+  let current = rotation;
+  const duration = 3000; // 3 sec
+  const start = performance.now();
+
+  function animate(now){
+    const elapsed = now - start;
+    const progress = Math.min(elapsed/duration,1);
+    rotation = current + (targetRotation-current)*easeOutCubic(progress);
+    ctx.clearRect(0,0,300,300);
+    ctx.save();
+    ctx.translate(150,150);
+    ctx.rotate(rotation);
+    ctx.translate(-150,-150);
+    drawWheel();
+    ctx.restore();
+    if(progress<1) requestAnimationFrame(animate);
+    else wheelResult.textContent = `🎉 ${tasks[newIndex]}!`;
+  }
+  requestAnimationFrame(animate);
+}
+
+function easeOutCubic(t){return 1 - Math.pow(1-t,3);}
+
 </script>
 </body>
 </html>
