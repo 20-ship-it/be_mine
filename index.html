@@ -130,9 +130,9 @@ button:active{transform:scale(0.96)}
 </section>
 
 <section>
-  <h1>Spin the Wheel 🎡</h1>
-  <div style="position:relative; width:320px; height:360px; margin:auto;">
-    <canvas id="wheelCanvas" width="320" height="320" style="border-radius:50%; box-shadow:0 10px 30px rgba(0,0,0,0.25)"></canvas>
+  <h1 style="margin-bottom:20px;">Spin the Wheel 🎡</h1>
+  <div style="position:relative; width:320px; margin:auto;">
+    <canvas id="wheelCanvas" width="320" height="320" style="border-radius:50%; box-shadow:0 8px 25px rgba(0,0,0,0.25)"></canvas>
     <div id="pointer" style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);font-size:32px;">⬇️</div>
     <button id="spinBtn" style="margin-top:20px;background:#ff2f6d;color:#fff;padding:15px 25px;font-size:16px;border:none;border-radius:999px;cursor:pointer;box-shadow:0 10px 25px rgba(255,47,109,0.45);display:block;">Spin 💖</button>
   </div>
@@ -213,34 +213,37 @@ const tasks = [
   "🎶 Sing a love song"
 ];
 
-let prevIndex = -1, repeatCount = 0;
+const colors = ['#ff5f8f','#ff8fab','#ff2f6d','#ffa3c1','#ff7ea0']; // Valentine colors
 const numSlices = tasks.length;
-const colors = ['#ff5f8f','#ff8fab','#ff2f6d','#ffa3c1','#ff7ea0']; // nicer Valentine colors
+
+let rotation = 0;
+let prevIndex = -1;
+let repeatCount = 0;
 
 function drawWheel() {
   const angle = 2*Math.PI/numSlices;
   for(let i=0;i<numSlices;i++){
     ctx.beginPath();
-    ctx.moveTo(160,160); // center of canvas
+    ctx.moveTo(160,160);
     ctx.fillStyle = colors[i%colors.length];
-    ctx.arc(160,160,160, i*angle, (i+1)*angle);
+    ctx.arc(160,160,160,i*angle,(i+1)*angle);
     ctx.lineTo(160,160);
     ctx.fill();
 
-    // Draw text
+    // Draw text along slice
     ctx.save();
     ctx.translate(160,160);
     ctx.rotate(i*angle + angle/2);
-    ctx.textAlign = "right";
-    ctx.fillStyle = "#fff";
-    ctx.font = "bold 14px Poppins";
+    ctx.fillStyle="#fff";
+    ctx.font="bold 14px Poppins";
+    ctx.textAlign="right";
     ctx.fillText(tasks[i],140,5);
     ctx.restore();
   }
 }
 drawWheel();
 
-let rotation = 0;
+function easeOutCubic(t){ return 1-Math.pow(1-t,3); }
 
 spinBtn.onclick = () => {
   let newIndex;
@@ -256,7 +259,7 @@ spinBtn.onclick = () => {
   const targetRotation = 2*Math.PI*spins - newIndex*anglePerSlice + anglePerSlice/2;
 
   const startRotation = rotation;
-  const duration = 3000; // 3 seconds
+  const duration = 3000;
   const startTime = performance.now();
 
   function animate(now){
@@ -278,8 +281,6 @@ spinBtn.onclick = () => {
 
   requestAnimationFrame(animate);
 }
-
-function easeOutCubic(t){ return 1-Math.pow(1-t,3); }
 
 
 </script>
