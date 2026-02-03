@@ -131,11 +131,12 @@ button:active{transform:scale(0.96)}
 
 <section>
   <h1>Spin the Wheel 🎡</h1>
-  <div style="position:relative; width:300px; height:300px;">
-    <canvas id="wheelCanvas" width="300" height="300" style="border-radius:50%; box-shadow:0 10px 30px rgba(0,0,0,0.25)"></canvas>
-    <button id="spinBtn" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#ff2f6d;color:#fff;padding:15px 25px;font-size:16px;border:none;border-radius:999px;cursor:pointer;box-shadow:0 10px 25px rgba(255,47,109,0.45)">Spin 💖</button>
+  <div style="position:relative; width:320px; height:360px; margin:auto;">
+    <canvas id="wheelCanvas" width="320" height="320" style="border-radius:50%; box-shadow:0 10px 30px rgba(0,0,0,0.25)"></canvas>
+    <div id="pointer" style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);font-size:32px;">⬇️</div>
+    <button id="spinBtn" style="margin-top:20px;background:#ff2f6d;color:#fff;padding:15px 25px;font-size:16px;border:none;border-radius:999px;cursor:pointer;box-shadow:0 10px 25px rgba(255,47,109,0.45);display:block;">Spin 💖</button>
   </div>
-  <p id="wheelResult" style="margin-top:20px;font-size:18px;color:#fff;text-shadow:1px 1px 4px rgba(0,0,0,0.3)"></p>
+  <p id="wheelResult" style="margin-top:15px;font-size:18px;color:#fff;text-shadow:1px 1px 4px rgba(0,0,0,0.3)"></p>
 </section>
 
 
@@ -213,22 +214,26 @@ const tasks = [
 ];
 
 let prevIndex = -1, repeatCount = 0;
+const numSlices = tasks.length;
+const colors = ['#ff5f8f','#ff8fab','#ff2f6d','#ffa3c1','#ff7ea0']; // nicer Valentine colors
 
 function drawWheel() {
-  const num = tasks.length;
-  const angle = 2*Math.PI/num;
-  for(let i=0;i<num;i++){
+  const angle = 2*Math.PI/numSlices;
+  for(let i=0;i<numSlices;i++){
     ctx.beginPath();
-    ctx.moveTo(150,150);
-    ctx.fillStyle = i%2===0 ? '#ff9acb' : '#ff5f8f';
-    ctx.arc(150,150,150, i*angle, (i+1)*angle);
+    ctx.moveTo(160,160); // center of canvas
+    ctx.fillStyle = colors[i%colors.length];
+    ctx.arc(160,160,160, i*angle, (i+1)*angle);
+    ctx.lineTo(160,160);
     ctx.fill();
+
+    // Draw text
     ctx.save();
-    ctx.translate(150,150);
+    ctx.translate(160,160);
     ctx.rotate(i*angle + angle/2);
-    ctx.fillStyle = '#fff';
-    ctx.font = '14px Poppins';
-    ctx.textAlign = 'right';
+    ctx.textAlign = "right";
+    ctx.fillStyle = "#fff";
+    ctx.font = "bold 14px Poppins";
     ctx.fillText(tasks[i],140,5);
     ctx.restore();
   }
@@ -240,38 +245,42 @@ let rotation = 0;
 spinBtn.onclick = () => {
   let newIndex;
   do {
-    newIndex = Math.floor(Math.random()*tasks.length);
+    newIndex = Math.floor(Math.random()*numSlices);
   } while(newIndex === prevIndex && repeatCount >= 2);
 
   if(newIndex === prevIndex) repeatCount++; else repeatCount=0;
   prevIndex = newIndex;
 
-  const spins = 5 + Math.random()*5; // random spins
-  const anglePerSlice = 2*Math.PI/tasks.length;
+  const spins = 6 + Math.random()*4; // random full spins
+  const anglePerSlice = 2*Math.PI/numSlices;
   const targetRotation = 2*Math.PI*spins - newIndex*anglePerSlice + anglePerSlice/2;
 
-  let current = rotation;
-  const duration = 3000; // 3 sec
-  const start = performance.now();
+  const startRotation = rotation;
+  const duration = 3000; // 3 seconds
+  const startTime = performance.now();
 
   function animate(now){
-    const elapsed = now - start;
+    const elapsed = now - startTime;
     const progress = Math.min(elapsed/duration,1);
-    rotation = current + (targetRotation-current)*easeOutCubic(progress);
-    ctx.clearRect(0,0,300,300);
+    rotation = startRotation + (targetRotation-startRotation)*easeOutCubic(progress);
+
+    ctx.clearRect(0,0,320,320);
     ctx.save();
-    ctx.translate(150,150);
+    ctx.translate(160,160);
     ctx.rotate(rotation);
-    ctx.translate(-150,-150);
+    ctx.translate(-160,-160);
     drawWheel();
     ctx.restore();
+
     if(progress<1) requestAnimationFrame(animate);
     else wheelResult.textContent = `🎉 ${tasks[newIndex]}!`;
   }
+
   requestAnimationFrame(animate);
 }
 
-function easeOutCubic(t){return 1 - Math.pow(1-t,3);}
+function easeOutCubic(t){ return 1-Math.pow(1-t,3); }
+
 
 </script>
 </body>
