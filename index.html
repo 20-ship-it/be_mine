@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Be My Valentine 💖</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Pacifico&display=swap" rel="stylesheet">
+<style>
+:root{--pink:#ff3d6e;--bg:linear-gradient(135deg,#ff758c,#ff7eb3)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Poppins;background:var(--bg);color:#333}
+section{min-height:100vh;scroll-snap-align:start;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:40px;text-align:center}
+.wrapper{scroll-snap-type:y mandatory;overflow-y:auto;height:100vh}
+h1,h2{font-family:Pacifico;color:#fff}
+button{border:none;border-radius:30px;padding:12px 26px;font-size:16px;cursor:pointer;transition:0.3s}
+.yes{background:var(--pink);color:#fff}
+.no{background:#fff}
+.card{background:#fff;border-radius:26px;padding:26px;box-shadow:0 20px 40px rgba(0,0,0,0.25);max-width:420px;width:100%}
+.hidden{display:none}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:20px;margin-top:20px;max-width:900px}
+.box{background:#fff;border-radius:20px;padding:22px;cursor:pointer;box-shadow:0 10px 25px rgba(0,0,0,0.18);transition:0.3s}
+.box:hover{transform:translateY(-6px)}
+.trans{background:rgba(255,255,255,0.7);backdrop-filter:blur(12px)}
+.album{display:flex;gap:18px;flex-wrap:wrap;justify-content:center}
+.album div{background:#fff;border-radius:18px;padding:18px;width:170px;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,0.18)}
+.gift{font-size:32px}
+.photo{width:100%;border-radius:14px;filter:blur(12px);transition:0.4s}
+.reveal .photo{filter:blur(0)}
+.confetti{position:fixed;inset:0;pointer-events:none}
+</style>
+</head>
+<body>
+<audio id="bgm" src="love.mp3" loop></audio>
+<div class="confetti" id="confetti"></div>
+
+<div class="wrapper">
+
+<section id="q1">
+<h1>Will you be my Valentine? 💕</h1>
+<div style="margin-top:30px;position:relative;height:80px">
+<button class="yes" id="yesBtn">Yes 💖</button>
+<button class="no" id="noBtn" style="position:absolute;left:140px">No 😢</button>
+</div>
+</section>
+
+<section id="q2" class="hidden">
+<div class="card">
+<h2>Good choice baby 😽</h2>
+<p>Now you’re stuck with me 💕</p>
+<img src="https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif" width="170"><br><br>
+<h6>Wait… do you want to change your mind?</h6>
+<button class="no" id="changeMind">Actually no</button>
+</div>
+</section>
+
+<section id="late" class="hidden">
+<h1>Too late 😌💘</h1>
+<p>You already chose love. Here’s why 💞</p>
+<p>You make my days better, my smiles wider, and my heart calmer 💖</p>
+</section>
+
+<section>
+<h1>Our Virtual Date Ideas 🍿💻</h1>
+<div class="grid">
+<div class="box">🍕 Order the same food together</div>
+<div class="box">🎬 Watch a movie in sync</div>
+<div class="box">🎮 Play a silly online game</div>
+<div class="box">📞 Midnight voice calls</div>
+<div class="box">🌙 Virtual stargazing</div>
+</div>
+</section>
+
+<section>
+<h1>Secret Note 💌</h1>
+<div class="box" onclick="openNote()">📩 Tap to open</div>
+<div id="note" class="card hidden">I love you for your laugh, your kindness, and the way you make everything feel safe 💖</div>
+</section>
+
+<section>
+<h1>Our Favorite Moments 🎁</h1>
+<div class="grid">
+<div class="box" onclick="reveal(this)"><div class="gift">🎁</div><img class="photo" src="photo1.jpg"><small>Our first laugh</small></div>
+<div class="box" onclick="reveal(this)"><div class="gift">🎁</div><img class="photo" src="photo2.jpg"><small>Late night talks</small></div>
+<div class="box" onclick="reveal(this)"><div class="gift">🎁</div><img class="photo" src="photo3.jpg"><small>That smile</small></div>
+<div class="box" onclick="reveal(this)"><div class="gift">🎁</div><img class="photo" src="photo4.jpg"><small>Us 💕</small></div>
+</div>
+</section>
+
+<section>
+<h1>Our Soundtracks 🎶</h1>
+<div class="album">
+<div onclick="play(0)">❤️ Song One</div>
+<div onclick="play(1)">💗 Song Two</div>
+<div onclick="play(2)">💓 Song Three</div>
+<div onclick="play(3)">💞 Song Four</div>
+</div>
+<audio id="audio"></audio>
+</section>
+
+<section>
+<h1>Things I Love About You 💘</h1>
+<div class="grid">
+<div class="box">😊 Your smile</div><div class="box">💬 Your voice</div><div class="box">💖 Your heart</div><div class="box">😽 Your cuteness</div><div class="box">🤍 Your care</div><div class="box">🔥 Your vibe</div><div class="box">🌸 Your soul</div><div class="box">✨ Your presence</div><div class="box">🥺 Your love</div><div class="box">💫 Everything</div>
+</div>
+</section>
+
+<section>
+<h1>Secret Surprise 🎀</h1>
+<div class="grid">
+<div class="box trans" onclick="this.innerText='You are my favorite person 💕'">🎁</div>
+<div class="box trans" onclick="this.innerText='I choose you everyday 💖'">🎁</div>
+<div class="box trans" onclick="this.innerText='Forever feels right with you 💞'">🎁</div>
+<div class="box trans" onclick="this.innerText='You’re my home 😽'">🎁</div>
+</div>
+</section>
+
+</div>
+
+<script>
+let scale=1,tries=0;
+const noBtn=document.getElementById('noBtn');
+const yesBtn=document.getElementById('yesBtn');
+noBtn.onmouseover=()=>{noBtn.style.left=Math.random()*220+'px';scale+=0.12;yesBtn.style.transform=`scale(${scale})`;}
+yesBtn.onclick=()=>{document.getElementById('bgm').play();confettiBoom();document.getElementById('q1').classList.add('hidden');document.getElementById('q2').classList.remove('hidden')}
+const cm=document.getElementById('changeMind');cm.onclick=()=>{tries++;if(tries<3){cm.style.transform=`translate(${Math.random()*160}px,${Math.random()*80}px)`}else{document.getElementById('q2').classList.add('hidden');document.getElementById('late').classList.remove('hidden')}}
+function openNote(){document.getElementById('note').classList.remove('hidden')}
+function reveal(el){el.classList.add('reveal')}
+const songs=['song1.mp3','song2.mp3','song3.mp3','song4.mp3'];
+function play(i){const a=document.getElementById('audio');a.src=songs[i];a.play()}
+function confettiBoom(){const c=document.getElementById('confetti');for(let i=0;i<80;i++){const s=document.createElement('div');s.innerText='💖';s.style.position='absolute';s.style.left=Math.random()*100+'%';s.style.top='-10px';s.style.fontSize='20px';s.style.animation=`fall ${3+Math.random()*3}s linear`;c.appendChild(s);setTimeout(()=>s.remove(),6000)}}
+</script>
+</body>
+</html>
