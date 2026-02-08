@@ -42,6 +42,44 @@ button:active{transform:scale(0.96)}
 .confetti{position:fixed;inset:0;pointer-events:none}
 .valentine-buttons{position:relative;height:160px;margin-top:30px}
 </style>
+<style>
+/* ===== Spin Wheel ===== */
+.wheel-wrapper{
+  position:relative;
+  width:360px;
+  height:360px;
+  margin:10px auto 30px;
+}
+
+#wheel{
+  border-radius:50%;
+  background:#fff;
+  box-shadow:0 25px 45px rgba(0,0,0,0.3);
+}
+
+.pointer{
+  position:absolute;
+  top:-22px;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:38px;
+  z-index:10;
+  text-shadow:0 4px 8px rgba(0,0,0,0.3);
+}
+
+.spin-btn{
+  margin-top:30px;
+  background:#ff2f6d;
+  color:#fff;
+  padding:18px 44px;
+  font-size:18px;
+  border:none;
+  border-radius:999px;
+  cursor:pointer;
+  box-shadow:0 10px 25px rgba(255,47,109,0.45);
+}
+</style>
+
 </head>
 <body>
 <header>
@@ -130,14 +168,17 @@ button:active{transform:scale(0.96)}
 </section>
 
 <section>
-  <h1 style="margin-bottom:20px;">Spin the Wheel 🎡</h1>
-  <div style="position:relative; width:320px; margin:auto;">
-    <canvas id="wheelCanvas" width="320" height="320" style="border-radius:50%; box-shadow:0 8px 25px rgba(0,0,0,0.25)"></canvas>
-    <div id="pointer" style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);font-size:32px;">⬇️</div>
-    <button id="spinBtn" style="margin-top:20px;background:#ff2f6d;color:#fff;padding:15px 25px;font-size:16px;border:none;border-radius:999px;cursor:pointer;box-shadow:0 10px 25px rgba(255,47,109,0.45);display:block;">Spin 💖</button>
+  <h1 style="margin-bottom:25px;">Spin the Wheel 🎡</h1>
+
+  <div class="wheel-wrapper">
+    <div class="pointer">⬇️</div>
+    <canvas id="wheel" width="360" height="360"></canvas>
   </div>
-  <p id="wheelResult" style="margin-top:15px;font-size:18px;color:#fff;text-shadow:1px 1px 4px rgba(0,0,0,0.3)"></p>
+
+  <button id="spinBtn" class="spin-btn">Spin 💖</button>
 </section>
+
+
 
 
 <footer>Made with ❤️ by Yours Kothi</footer>
@@ -200,89 +241,93 @@ function confettiBoom(){
   }
 }
 
-const wheelCanvas = document.getElementById('wheelCanvas');
-const ctx = wheelCanvas.getContext('2d');
-const spinBtn = document.getElementById('spinBtn');
-const wheelResult = document.getElementById('wheelResult');
+</script>
+
+<script>
+const canvas = document.getElementById("wheel");
+const ctx = canvas.getContext("2d");
+const spinBtn = document.getElementById("spinBtn");
 
 const tasks = [
-  "💋 Give 100 kisses",
-  "😂 Do a silly dance",
-  "🍫 Surprise with chocolates",
-  "💌 Write a love note",
-  "🎶 Sing a love song"
+  "💋 100 Kisses",
+  "😂 Silly Dance",
+  "🍫 Chocolates",
+  "💌 Love Note",
+  "🎶 Love Song"
 ];
 
-const colors = ['#ff5f8f','#ff8fab','#ff2f6d','#ffa3c1','#ff7ea0']; // Valentine colors
-const numSlices = tasks.length;
+const colors = ["#ff5f8f","#ff8fab","#ff2f6d","#ffa3c1","#ff7ea0"];
+const sliceCount = tasks.length;
+const center = canvas.width / 2;
+const radius = center;
 
 let rotation = 0;
-let prevIndex = -1;
-let repeatCount = 0;
+let lastIndex = -1;
+let repeat = 0;
 
-function drawWheel() {
-  const angle = 2*Math.PI/numSlices;
-  for(let i=0;i<numSlices;i++){
+function drawWheel(){
+  const slice = 2 * Math.PI / sliceCount;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  for(let i=0;i<sliceCount;i++){
+    const start = rotation + i * slice;
+    const end = start + slice;
+
     ctx.beginPath();
-    ctx.moveTo(160,160);
-    ctx.fillStyle = colors[i%colors.length];
-    ctx.arc(160,160,160,i*angle,(i+1)*angle);
-    ctx.lineTo(160,160);
+    ctx.moveTo(center,center);
+    ctx.arc(center,center,radius,start,end);
+    ctx.fillStyle = colors[i];
     ctx.fill();
 
-    // Draw text along slice
     ctx.save();
-    ctx.translate(160,160);
-    ctx.rotate(i*angle + angle/2);
-    ctx.fillStyle="#fff";
-    ctx.font="bold 14px Poppins";
-    ctx.textAlign="right";
-    ctx.fillText(tasks[i],140,5);
+    ctx.translate(center,center);
+    ctx.rotate(start + slice/2);
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#fff";
+    ctx.font = "bold 16px Poppins";
+    ctx.fillText(tasks[i], radius * 0.62, 6);
     ctx.restore();
   }
 }
+
 drawWheel();
 
-function easeOutCubic(t){ return 1-Math.pow(1-t,3); }
+function spinWheel(){
+  let index;
+  do{
+    index = Math.floor(Math.random() * sliceCount);
+  }while(index === lastIndex && repeat >= 2);
 
-spinBtn.onclick = () => {
-  let newIndex;
-  do {
-    newIndex = Math.floor(Math.random()*numSlices);
-  } while(newIndex === prevIndex && repeatCount >= 2);
+  repeat = (index === lastIndex) ? repeat + 1 : 0;
+  lastIndex = index;
 
-  if(newIndex === prevIndex) repeatCount++; else repeatCount=0;
-  prevIndex = newIndex;
+  const slice = 2 * Math.PI / sliceCount;
 
-  const spins = 6 + Math.random()*4; // random full spins
-  const anglePerSlice = 2*Math.PI/numSlices;
-  const targetRotation = 2*Math.PI*spins - newIndex*anglePerSlice + anglePerSlice/2;
+  // Center of slice aligned to pointer
+  const target =
+    (3 * Math.PI / 2) - (index * slice + slice / 2);
 
-  const startRotation = rotation;
-  const duration = 3000;
+  const spins = 6 + Math.random() * 3;
+  const finalRotation = spins * 2 * Math.PI + target;
+
+  const start = rotation;
+  const duration = 3200;
   const startTime = performance.now();
 
-  function animate(now){
-    const elapsed = now - startTime;
-    const progress = Math.min(elapsed/duration,1);
-    rotation = startRotation + (targetRotation-startRotation)*easeOutCubic(progress);
-
-    ctx.clearRect(0,0,320,320);
-    ctx.save();
-    ctx.translate(160,160);
-    ctx.rotate(rotation);
-    ctx.translate(-160,-160);
+  function animate(time){
+    const t = Math.min((time - startTime) / duration, 1);
+    const ease = 1 - Math.pow(1 - t, 3);
+    rotation = start + (finalRotation - start) * ease;
     drawWheel();
-    ctx.restore();
-
-    if(progress<1) requestAnimationFrame(animate);
-    else wheelResult.textContent = `🎉 ${tasks[newIndex]}!`;
+    if(t < 1) requestAnimationFrame(animate);
   }
 
   requestAnimationFrame(animate);
 }
 
-
+spinBtn.onclick = spinWheel;
 </script>
+
+
 </body>
 </html>
