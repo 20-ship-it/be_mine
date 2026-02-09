@@ -227,102 +227,105 @@ button:active{transform:scale(0.96)}
 <footer>Made with ❤️ by Yours Kothi</footer>
 
 <script>
+
 let yesScale = 1;
-let noTries = 0;
+let canGrow = true;
+let tries = 0;
 
 const noTexts = [
   "Are you sure? 😼",
-  "Think again 🤨",
-  "Really sure? 😏",
-  "Don’t do this 😳",
-  "I’ll cry 💔",
-  "Stop chasing me 😹",
-  "NO 😎"
+  "Think again 👀",
+  "Really?? 😏",
+  "Don’t break my heart 💔",
+  "Last chance 😶",
+  "Nope 😤",
+  "Okay okay 😳"
 ];
 
-document.addEventListener("mousemove", (e) => {
-  const rect = noBtn.getBoundingClientRect();
-  const dist = Math.hypot(
-    e.clientX - (rect.left + rect.width / 2),
-    e.clientY - (rect.top + rect.height / 2)
-  );
+const yesBtn = document.getElementById("yesBtn");
+const noBtn = document.getElementById("noBtn");
+const cm = document.getElementById("changeMind");
 
-  if(dist < 120){
-    escapeNo();
-  }
-});
-
-function escapeNo(){
-  noTries++;
-  noBtn.textContent = noTexts[noTries % noTexts.length];
-
-  yesScale += 0.12;
-  yesBtn.style.transform = `scale(${yesScale})`;
-  yesBtn.style.boxShadow = `0 ${14+noTries}px ${32+noTries}px rgba(255,47,109,0.55)`;
-
-  const x = (Math.random()*260)-130;
-  const y = (Math.random()*120)-60;
-  noBtn.style.transform = `translate(${x}px,${y}px)`;
-  noBtn.style.position = "absolute";
-
-}
-
-
-yesBtn.onclick=()=>{
-  const bgm=document.getElementById('bgm');
-  bgm.volume=0.5;
-  setTimeout(()=>bgm.play().catch(()=>{}),5000);
+// ===== YES button click =====
+yesBtn.onclick = () => {
+  const bgm = document.getElementById('bgm');
+  bgm.volume = 0.5;
+  setTimeout(() => bgm.play().catch(() => {}), 5000);
   confettiBoom();
   document.getElementById('q1').classList.add('hidden');
   document.getElementById('q2').classList.remove('hidden');
 };
 
-const cm=document.getElementById('changeMind');
-cm.onclick=()=>{
+// ===== NO button teasing =====
+noBtn.addEventListener("mouseenter", () => {
+  const x = (Math.random() * 300) - 150;
+  const y = (Math.random() * 160) - 80;
+  noBtn.style.position = "absolute";
+  noBtn.style.transform = `translate(${x}px, ${y}px)`;
+  noBtn.textContent = noTexts[Math.floor(Math.random() * noTexts.length)];
+
+  if (canGrow) {
+    yesScale += 0.15;
+    yesBtn.style.transform = `scale(${yesScale})`;
+    canGrow = false;
+  }
+});
+
+noBtn.addEventListener("mouseleave", () => {
+  canGrow = true;
+});
+
+// ===== Change mind button =====
+cm.onclick = () => {
   tries++;
-  if(tries<3){
-    cm.style.transform=`translate(${Math.random()*220}px,${Math.random()*120}px)`;
+  if (tries < 3) {
+    cm.style.transform = `translate(${Math.random() * 220}px, ${Math.random() * 120}px)`;
   } else {
     document.getElementById('q2').classList.add('hidden');
     document.getElementById('late').classList.remove('hidden');
   }
 };
 
-function openNote(){document.getElementById('note').classList.remove('hidden')}
-function reveal(el){el.classList.add('reveal')}
-const songs=['song1.mp3','song2.mp3','song3.mp3','song4.mp3'];
-function play(i){const a=document.getElementById('audio');a.src=songs[i];a.play()}
+// ===== Secret note =====
+function openNote() {
+  document.getElementById('note').classList.remove('hidden');
+}
 
-function confettiBoom(){
-  const c=document.getElementById('confetti');
-  for(let i=0;i<100;i++){
-    const s=document.createElement('div');
-    s.innerText='💖';
-    s.style.position='absolute';
-    s.style.left=Math.random()*100+'%';
-    s.style.top='-10px';
-    s.style.fontSize='22px';
-    s.style.animation=`fall ${3+Math.random()*3}s linear`;
+// ===== Reveal gift photos =====
+function reveal(el) {
+  el.classList.add('reveal');
+}
+
+// ===== Play soundtracks =====
+const songs = ['song1.mp3','song2.mp3','song3.mp3','song4.mp3'];
+function play(i) {
+  const a = document.getElementById('audio');
+  a.src = songs[i];
+  a.play();
+}
+
+// ===== Confetti effect =====
+function confettiBoom() {
+  const c = document.getElementById('confetti');
+  for (let i = 0; i < 100; i++) {
+    const s = document.createElement('div');
+    s.innerText = '💖';
+    s.style.position = 'absolute';
+    s.style.left = Math.random() * 100 + '%';
+    s.style.top = '-10px';
+    s.style.fontSize = '22px';
+    s.style.animation = `fall ${3 + Math.random() * 3}s linear`;
     c.appendChild(s);
-    setTimeout(()=>s.remove(),6000);
+    setTimeout(() => s.remove(), 6000);
   }
 }
 
-</script>
-
-<script>
+// ===== Spin wheel =====
 const canvas = document.getElementById("wheel");
 const ctx = canvas.getContext("2d");
 const spinBtn = document.getElementById("spinBtn");
 
-const tasks = [
-  "💋 100 Kisses",
-  "😂 Silly Dance",
-  "🍫 Chocolates",
-  "💌 Love Note",
-  "🎶 Love Song"
-];
-
+const tasks = ["💋 100 Kisses", "😂 Silly Dance", "🍫 Chocolates", "💌 Love Note", "🎶 Love Song"];
 const colors = ["#ff5f8f","#ff8fab","#ff2f6d","#ffa3c1","#ff7ea0"];
 const sliceCount = tasks.length;
 const center = canvas.width / 2;
@@ -332,51 +335,44 @@ let rotation = 0;
 let lastIndex = -1;
 let repeat = 0;
 
-function drawWheel(){
+function drawWheel() {
   const slice = 2 * Math.PI / sliceCount;
   ctx.clearRect(0,0,canvas.width,canvas.height);
 
-  for(let i=0;i<sliceCount;i++){
+  for (let i = 0; i < sliceCount; i++) {
     const start = rotation + i * slice;
     const end = start + slice;
 
     ctx.beginPath();
-    ctx.moveTo(center,center);
-    ctx.arc(center,center,radius,start,end);
+    ctx.moveTo(center, center);
+    ctx.arc(center, center, radius, start, end);
     ctx.fillStyle = colors[i];
     ctx.fill();
 
     ctx.save();
-    ctx.translate(center,center);
+    ctx.translate(center, center);
     ctx.rotate(start + slice/2);
     ctx.textAlign = "center";
     ctx.fillStyle = "#ffffff";
     ctx.font = "bold 17px Poppins";
     ctx.shadowColor = "rgba(0,0,0,0.35)";
     ctx.shadowBlur = 4;
-
     ctx.fillText(tasks[i], radius * 0.62, 6);
     ctx.restore();
   }
 }
-
 drawWheel();
 
-function spinWheel(){
+function spinWheel() {
   let index;
-  do{
-    index = Math.floor(Math.random() * sliceCount);
-  }while(index === lastIndex && repeat >= 2);
+  do { index = Math.floor(Math.random() * sliceCount); }
+  while(index === lastIndex && repeat >= 2);
 
   repeat = (index === lastIndex) ? repeat + 1 : 0;
   lastIndex = index;
 
   const slice = 2 * Math.PI / sliceCount;
-
-  // Center of slice aligned to pointer
-  const target =
-    (3 * Math.PI / 2) - (index * slice + slice / 2);
-
+  const target = (3 * Math.PI / 2) - (index * slice + slice / 2);
   const spins = 6 + Math.random() * 3;
   const finalRotation = spins * 2 * Math.PI + target;
 
@@ -384,12 +380,12 @@ function spinWheel(){
   const duration = 3200;
   const startTime = performance.now();
 
-  function animate(time){
+  function animate(time) {
     const t = Math.min((time - startTime) / duration, 1);
     const ease = 1 - Math.pow(1 - t, 3);
     rotation = start + (finalRotation - start) * ease;
     drawWheel();
-    if(t < 1) requestAnimationFrame(animate);
+    if (t < 1) requestAnimationFrame(animate);
   }
 
   requestAnimationFrame(animate);
@@ -397,6 +393,8 @@ function spinWheel(){
 
 spinBtn.onclick = spinWheel;
 </script>
+
+
 
 
 </body>
