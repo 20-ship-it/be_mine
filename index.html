@@ -181,6 +181,7 @@ button:active{transform:scale(0.96)}
 
 <section id="q1">
   <h1>Will you be my Valentine?</h1>
+  <h3>You already accepted the position… but I just need you to blush again 🥺❤️</h3>
   <div class="choice-buttons">
   <button id="yesBtn">Yes ❤️</button>
   <button id="noBtn">No 😼</button>
@@ -205,21 +206,74 @@ button:active{transform:scale(0.96)}
 </section>
 
 <section>
-  <h1>Our Virtual Date Ideas 🍿💻</h1>
+  <h1>Our Little Adventures Together ❤️</h1>
   <div class="grid">
-    <div class="box">🍕 Order the same food together</div>
-    <div class="box">🎬 Watch a movie in sync</div>
-    <div class="box">🎮 Play a silly online game</div>
-    <div class="box">📞 Midnight voice calls</div>
-    <div class="box">🌙 Virtual stargazing</div>
+
+    <div class="box">🍽️ Cook something new together</div>
+
+    <div class="box">🎧 Sharing earphones and listening to our favorite songs</div>
+
+    <div class="box">📸 Capturing silly and beautiful memories together</div>
+
+    <div class="box">💫 Building a future full of adventures, just us</div>
+
+    <div class="box">🤍 Getting lost in conversations that last till 3 AM</div>
+
+    <div class="box">🚶 Long walks while holding hands</div>
+
+    <div class="box">✨ Growing, dreaming, and conquering life together</div>
+
   </div>
 </section>
+
 
 <section>
   <h1>Secret Note 💌</h1>
   <div class="box" onclick="openNote()">📩 Tap to open</div>
-  <div id="note" class="card hidden">I love you for your laugh, your kindness, and the way you make everything feel warm and safe 💖</div>
+
+  <div id="note" class="card hidden">
+    I just want to tell you something from my heart.
+
+    <br><br>
+
+    I love your smile. It brings peace to me.  
+    The Bible says, “A cheerful heart is good medicine” (Proverbs 17:22),  
+    and that is exactly what you are in my life.
+
+    <br><br>
+
+    I love how kind you are to everyone.  
+    You don’t try to be good… you just are.  
+    “Let all that you do be done in love” (1 Corinthians 16:14) —  
+    that verse feels like it was written about you.
+
+    <br><br>
+
+    You are gentle. You are patient.  
+    “Love is patient, love is kind” (1 Corinthians 13:4).  
+    I see that in you every day.
+
+    <br><br>
+
+    Being with you feels calm. Safe. Warm.  
+    And I thank God for that.
+
+    <br><br>
+
+    You don’t just make me happy.  
+    You make me want to grow.  
+    To pray more.  
+    To become better.
+  </div>
+
+  <div id="finalLine" class="card hidden">
+    And if God blesses me with a lifetime beside you…  
+    let’s walk hand in hand, worship Him together,  
+    pray together, grow together,  
+    and build a life that keeps Him at the center 🤍
+  </div>
 </section>
+
 
 <section>
   <h1>Our Favorite Moments 🎁</h1>
@@ -350,9 +404,21 @@ cm.onclick = () => {
 };
 
 // ===== Secret note =====
+let opened = false;
+
 function openNote() {
-  document.getElementById('note').classList.remove('hidden');
+  const note = document.getElementById('note');
+  const finalLine = document.getElementById('finalLine');
+
+  if (!opened) {
+    note.classList.remove('hidden');
+    opened = true;
+  } else {
+    finalLine.classList.remove('hidden');
+  }
 }
+
+
 
 // ===== Reveal gift photos =====
 function reveal(el) {
