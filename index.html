@@ -82,6 +82,54 @@ button:active{transform:scale(0.96)}
   z-index:1;
 }
 
+.music-player{
+  background:#fff;
+  padding:25px;
+  border-radius:26px;
+  box-shadow:0 20px 40px rgba(0,0,0,0.25);
+  width:100%;
+  max-width:420px;
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+}
+
+.song-list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.song-list button{
+  background:#ffe3ec;
+  border:none;
+  padding:14px;
+  border-radius:14px;
+  font-size:16px;
+  cursor:pointer;
+  transition:0.25s;
+}
+
+.song-list button:hover{
+  background:#ffccd9;
+  transform:scale(1.03);
+}
+
+.controls{
+  text-align:center;
+}
+
+#playPauseBtn{
+  background:#ff2f6d;
+  color:#fff;
+  padding:14px 30px;
+  border:none;
+  border-radius:999px;
+  font-size:16px;
+  cursor:pointer;
+  box-shadow:0 10px 25px rgba(255,47,109,0.4);
+}
+
 
 </style>
 <style>
@@ -140,13 +188,14 @@ button:active{transform:scale(0.96)}
 
 </section>
 
+<div id="mainContent" class="hidden">
 <section id="q2" class="hidden">
   <div class="card">
     <h2 style="background:linear-gradient(45deg,#ff2f6d,#ff8fab);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-shadow:1px 1px 4px rgba(0,0,0,0.2)">Good choice baby 😽</h2>
     <p style="font-size:18px">Now you’re stuck with me forever 💕</p>
     <img src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExNXB4NnR3a25yYTRtbXdqM2Nkdnc3cGxsczY0MGJxNTRpdmQ0N2VlZSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/5bdhq6YF0szPaCEk9Y/giphy.gif" width="280" style="border-radius:20px">
     <h6>Wait… do you want to change your mind?</h6>
-    <button class="no" id="changeMind" style="background:#ff2f6d;color:#fff;box-shadow:0 10px 25px rgba(255,47,109,0.45)">Actually no</button>
+    <button class="no" id="changeMind" style="background:#ff2f6d;color:#fff;box-shadow:0 10px 25px rgba(255,47,109,0.45)">Actually Yes</button>
   </div>
 </section>
 
@@ -184,14 +233,24 @@ button:active{transform:scale(0.96)}
 
 <section>
   <h1>Our Soundtracks 🎶</h1>
-  <div class="album">
-    <div onclick="play(0)">❤️ Song One</div>
-    <div onclick="play(1)">💗 Song Two</div>
-    <div onclick="play(2)">💓 Song Three</div>
-    <div onclick="play(3)">💞 Song Four</div>
+
+  <div class="music-player">
+    <div class="song-list">
+      <button onclick="selectSong(0)">❤️ Song One</button>
+      <button onclick="selectSong(1)">💗 Song Two</button>
+      <button onclick="selectSong(2)">💓 Song Three</button>
+      <button onclick="selectSong(3)">💞 Song Four</button>
+    </div>
+
+    <div class="controls">
+      <button id="playPauseBtn">▶ Play</button>
+    </div>
   </div>
+
   <audio id="audio"></audio>
 </section>
+
+
 
 <section>
   <h1>Things I Love About You 💘</h1>
@@ -225,6 +284,8 @@ button:active{transform:scale(0.96)}
 
 
 <footer>Made with ❤️ by Yours Kothi</footer>
+</div>
+
 
 <script>
 
@@ -253,7 +314,9 @@ yesBtn.onclick = () => {
   setTimeout(() => bgm.play().catch(() => {}), 5000);
   confettiBoom();
   document.getElementById('q1').classList.add('hidden');
+  document.getElementById('mainContent').classList.remove('hidden');
   document.getElementById('q2').classList.remove('hidden');
+
 };
 
 // ===== NO button teasing =====
@@ -298,11 +361,36 @@ function reveal(el) {
 
 // ===== Play soundtracks =====
 const songs = ['song1.mp3','song2.mp3','song3.mp3','song4.mp3'];
-function play(i) {
-  const a = document.getElementById('audio');
-  a.src = songs[i];
-  a.play();
+const audio = document.getElementById("audio");
+const playPauseBtn = document.getElementById("playPauseBtn");
+
+let currentSong = null;
+let isPlaying = false;
+
+function selectSong(index){
+  if(currentSong !== index){
+    audio.pause();
+    audio.src = songs[index];
+    currentSong = index;
+    audio.play();
+    isPlaying = true;
+    playPauseBtn.innerText = "⏸ Pause";
+  }
 }
+
+playPauseBtn.addEventListener("click", () => {
+  if(!audio.src) return;
+
+  if(isPlaying){
+    audio.pause();
+    playPauseBtn.innerText = "▶ Play";
+  } else {
+    audio.play();
+    playPauseBtn.innerText = "⏸ Pause";
+  }
+  isPlaying = !isPlaying;
+});
+
 
 // ===== Confetti effect =====
 function confettiBoom() {
